@@ -1,10 +1,45 @@
-tonatiuh_filename( "SolarFurnace_normal.tnh" );
-tonatiuh_numrays( 50000000  );
-tonatiuh_photon_map("PhotonMapDefault");
-tonatiuh_random_generator("Mersenne Twister");
+TEMPLATE      = lib
+CONFIG       += plugin debug_and_release
 
-var targetSurface = "//RootNode/SolarFurnace/Target/Target/TargetSurface";
-var targetFileName = "targetSurfaceData.dat";
+include( ../../config.pri )
 
-tonatiuh_trace();
-tonatiuh_export( targetFileName, targetSurface, false );
+
+INCLUDEPATH += . \
+				src \
+			$$(TONATIUH_ROOT)/src
+
+# Input
+HEADERS = src/*.h \        						
+           	$$(TONATIUH_ROOT)/src/source/raytracing/DifferentialGeometry.h \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/Photon.h \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TMaterial.h \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TShape.h \ 
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TShapeKit.h
+
+
+SOURCES = src/*.cpp  \    						
+           	$$(TONATIUH_ROOT)/src/source/raytracing/DifferentialGeometry.cpp \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/Photon.cpp \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TMaterial.cpp \
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TShape.cpp \ 
+           	$$(TONATIUH_ROOT)/src/source/raytracing/TShapeKit.cpp
+
+
+RESOURCES = src/ShapeTroughCPC.qrc	
+
+LIBS +=-L$$(TDE_ROOT)/local/lib -lCoin -lSoQt
+		
+
+CONFIG(debug, debug|release) {
+	DESTDIR       = $$(TONATIUH_ROOT)/bin/debug/plugins/ShapeTroughCPC
+	unix { 
+		TARGET = $$member(TARGET, 0)_debug
+	}
+	else {
+		TARGET = $$member(TARGET, 0)d
+	}
+}
+else { 
+	DESTDIR       = $$(TONATIUH_ROOT)/bin/release/plugins/ShapeTroughCPC
+}
+
